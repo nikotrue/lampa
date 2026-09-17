@@ -398,7 +398,8 @@
     // ── Base URLs ─────────────────────────────────────────────────────────────
 
     var PROXY_BASE_URL = 'https://apx.lme.isroot.in/trakt';
-    var DIRECT_BASE_URL = 'https://api.trakt.tv';
+    //var DIRECT_BASE_URL = 'https://api.trakt.tv';
+    var DIRECT_BASE_URL = 'https://apx.lme.isroot.in/trakt';
 
     // ── Client ID for Direct API Calls ────────────────────────────────────────
     // User-provided Trakt client ID, needed only when calling api.trakt.tv directly.
