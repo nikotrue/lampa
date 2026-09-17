@@ -1728,7 +1728,7 @@
         if (/^\/recommendations(\/|$)/.test(path) || /^\/search(\/|$)/.test(path)) {
             return CACHE_TTL_FEED_MS;
         }
-        if (path === '/users/me' || /^\/users\/me\/lists(\/|$)/.test(path) || /^\/users\/me\/likes\/lists(\/|$)/.test(path)) {
+        if (path === '/profile/me' || /^\/profile\/me\/lists(\/|$)/.test(path) || /^\/profile\/me\/likes\/lists(\/|$)/.test(path)) {
             return CACHE_TTL_PROGRESS_MS;
         }
         if (/^\/networks(\/|$)/.test(path)) {
@@ -2127,7 +2127,7 @@
                             setAuthBlocked('unauthorized_after_refresh');
                             notifyAuthBlockedOnce();
                         }
-                        if (!unauthorized && _t3 && _t3.status === 403 && normalizedEndpoint === '/users/me') {
+                        if (!unauthorized && _t3 && _t3.status === 403 && normalizedEndpoint === '/profile/me') {
                             setAuthBlocked('users_me_forbidden');
                             notifyAuthBlockedOnce();
                         }
@@ -2854,7 +2854,7 @@
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var page = params.page || 1;
             var limit = params.limit || 36;
-            return requestApi('GET', "/users/me/likes/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
+            return requestApi('GET', "/profile/me/likes/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
                 var raw = Array.isArray(response) ? response : [];
                 var likedListIds = raw.map(function (item) {
                     var _item$list;
@@ -2882,7 +2882,7 @@
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var page = params.page || 1;
             var limit = params.limit || 36;
-            return requestApi('GET', "/users/me/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
+            return requestApi('GET', "/profile/me/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
                 var raw = Array.isArray(response) ? response : [];
                 var formatted = _this2.formatListsResults(raw, [], {
                     wide: true,
@@ -2899,7 +2899,7 @@
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var listId = params.listId || params.id;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('GET', "/users/me/lists/".concat(encodeURIComponent(listId), "?extended=images")).then(function (response) {
+            return requestApi('GET', "/profile/me/lists/".concat(encodeURIComponent(listId), "?extended=images")).then(function (response) {
                 return normalizeListCardData(response, {
                     wide: true,
                     canManage: true
@@ -2911,7 +2911,7 @@
             var body = sanitizeListPayload(payload);
             if (!body.name) return Promise.reject(new Error('List name is missing'));
             if (!body.privacy) body.privacy = 'private';
-            return requestApi('POST', '/users/me/lists', body);
+            return requestApi('POST', '/profile/me/lists', body);
         },
         updateList: function updateList() {
             var _ref1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -2920,27 +2920,27 @@
             if (!listId) return Promise.reject(new Error('List ID is missing'));
             var body = sanitizeListPayload(payload);
             if (!body.name) return Promise.reject(new Error('List name is missing'));
-            return requestApi('PUT', "/users/me/lists/".concat(encodeURIComponent(listId)), body);
+            return requestApi('PUT', "/profile/me/lists/".concat(encodeURIComponent(listId)), body);
         },
         deleteList: function deleteList() {
             var _ref10 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 listId = _ref10.listId;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('DELETE', "/users/me/lists/".concat(encodeURIComponent(listId)));
+            return requestApi('DELETE', "/profile/me/lists/".concat(encodeURIComponent(listId)));
         },
         addToList: function addToList() {
             var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 listId = _ref11.listId,
                 item = _ref11.item;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('POST', "/users/me/lists/".concat(encodeURIComponent(listId), "/items"), buildSyncPayload(item || {}));
+            return requestApi('POST', "/profile/me/lists/".concat(encodeURIComponent(listId), "/items"), buildSyncPayload(item || {}));
         },
         removeFromList: function removeFromList() {
             var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 listId = _ref12.listId,
                 item = _ref12.item;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('POST', "/users/me/lists/".concat(encodeURIComponent(listId), "/items/remove"), buildSyncPayload(item || {}));
+            return requestApi('POST', "/profile/me/lists/".concat(encodeURIComponent(listId), "/items/remove"), buildSyncPayload(item || {}));
         },
         myListItems: function myListItems() {
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -2948,7 +2948,7 @@
             var page = params.page || 1;
             var limit = params.limit || 36;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            var url = "/users/me/lists/".concat(encodeURIComponent(listId), "/items?extended=full,images&page=").concat(page, "&limit=").concat(limit);
+            var url = "/profile/me/lists/".concat(encodeURIComponent(listId), "/items?extended=full,images&page=").concat(page, "&limit=").concat(limit);
             return requestApi('GET', url).then(function (response) {
                 var raw = Array.isArray(response) ? response : [];
                 var formatted = formatTraktResults(raw);
@@ -2972,7 +2972,7 @@
             if (!Object.keys(ids).length) return Promise.resolve(false);
             var page = 1;
             var _checkPage = function checkPage() {
-                var url = "/users/me/lists/".concat(encodeURIComponent(listId), "/items?extended=images&page=").concat(page, "&limit=").concat(limit);
+                var url = "/profile/me/lists/".concat(encodeURIComponent(listId), "/items?extended=images&page=").concat(page, "&limit=").concat(limit);
                 return requestApi('GET', url).then(function (response) {
                     var raw = Array.isArray(response) ? response : [];
                     var found = raw.some(function (entry) {
@@ -4203,7 +4203,7 @@
             return Promise.resolve(false);
         }
         if (traktVipStatusPromise) return traktVipStatusPromise;
-        traktVipStatusPromise = Api$2.get('/users/me').then(function (user) {
+        traktVipStatusPromise = Api$2.get('/profile/me').then(function (user) {
             var vipEnabled = !!(user && user.vip);
             writeStoredTraktVipStatus(vipEnabled);
             return vipEnabled;
@@ -7566,7 +7566,7 @@
                     nameEl.html('<span class="trakt-auth-label">Trakt.TV</span>');
                     return;
                 }
-                Api$1.get('/users/me').then(function (user) {
+                Api$1.get('/profile/me').then(function (user) {
                     if (user && user.username) {
                         var vipBadge = user.vip ? ' <span class="trakt-vip-badge trakt-vip-badge--enabled">' + Lampa.Lang.translate('trakttv_vip_enabled') + '</span>' : '';
                         nameEl.html('<span class="trakt-auth-label trakt-auth-label--user">' + Lampa.Lang.translate('trakttv_username') + ': <b>' + user.username + '</b>' + vipBadge + '</span>');
@@ -13149,7 +13149,7 @@
         if (!token) return setTraktHeadStatus(button, 'error');
         var Api = getGlobalApi();
         if (!Api || typeof Api.get !== 'function') return setTraktHeadStatus(button, 'error');
-        Api.get('/users/me').then(function () {
+        Api.get('/profile/me').then(function () {
             return setTraktHeadStatus(button, 'ok');
         })["catch"](function () {
             return setTraktHeadStatus(button, 'error');
