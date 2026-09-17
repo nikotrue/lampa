@@ -1493,7 +1493,9 @@
                             }
                             if (logging) logWarn('refreshTokens failed', {
                                 reason: reason,
-                                error: error
+                                error: error,
+                                //nikotrue
+                                redirect_uri: redirect_uri
                             }, {
                                 debugOnly: true
                             });
