@@ -1465,9 +1465,10 @@
                             logging = Lampa.Storage.field('trakt_enable_logging');
                             return _performRequest('POST', '/oauth/token', {
                                 refresh_token: refresh_token,
+                                grant_type: 'refresh_token',
                                 //redirect_uri: redirect_uri || '',
                                 //nikotrue
-                                grant_type: 'refresh_token'
+                                client_id: TRAKT_CLIENT_ID
                             }, true);
                         }).then(function (res) {
                             rlRecordRequest('/oauth/token', 200);
