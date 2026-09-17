@@ -1,4 +1,4 @@
 (function () {
     'use strict';
-    Lampa.Utils.putScriptAsync(['https://raw.githubusercontent.com/nikotrue/lampa/refs/heads/main/TraktTV/trakttv.js'], function () { });
+    Lampa.Utils.putScriptAsync(['https://nikotrue.github.io/lampa/TraktTV/trakttv.js'], function () { });
 })();
