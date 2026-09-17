@@ -435,7 +435,7 @@
             // 1. Protocol check — file/widget/local protocols are CORS-free
             var protocol = (window.location.protocol || '').toLowerCase();
             if (protocol === 'file:' || protocol === 'widget:' || protocol === 'local:') {
-                _corsFreeDetected = true;
+                _corsFreeDetected = false;
                 return true;
             }
 
