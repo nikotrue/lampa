@@ -443,7 +443,7 @@
             var ua = navigator.userAgent || '';
             if (/LampaApp|Tizen|WebOS|SmartTV/i.test(ua)) {
                 _corsFreeDetected = true;
-                return false;
+                return true;
             }
         } catch (e) {
             // If detection fails, assume CORS-strict
@@ -1443,7 +1443,7 @@
                             break;
                         }
                         if (logging) logDebug('refreshTokens skipped: no refresh token');
-                        //setAuthBlocked('no_refresh_token');
+                        setAuthBlocked('no_refresh_token');
                         return _context2.a(2, Promise.reject(Object.assign(new Error('No refresh_token'), {
                             status: 0,
                             code: 'no_refresh_token'
@@ -1462,13 +1462,10 @@
                         })));
                     case 2:
                         return _context2.a(2, rlWaitForSlot('/oauth/token').then(function () {
-                            logging = Lampa.Storage.field('trakt_enable_logging');
                             return _performRequest('POST', '/oauth/token', {
                                 refresh_token: refresh_token,
-                                grant_type: 'refresh_token',
-                                //redirect_uri: redirect_uri || '',
-                                //nikotrue
-                                client_id: TRAKT_CLIENT_ID
+                                redirect_uri: redirect_uri || '',
+                                grant_type: 'refresh_token'
                             }, true);
                         }).then(function (res) {
                             rlRecordRequest('/oauth/token', 200);
@@ -1489,17 +1486,13 @@
                                 });
                             }
                             if (error && (error.status === 400 || error.status === 401)) {
-                                // setAuthBlocked("refresh_failed_".concat(error.status));
-                                logging = Lampa.Storage.field('trakt_enable_logging');
+                                setAuthBlocked("refresh_failed_".concat(error.status));
                                 clearAuthStorage();
                             }
                             if (logging) logWarn('refreshTokens failed', {
                                 reason: reason,
-                                error: error,
-                                //nikotrue
-                                //redirect_uri: redirect_uri
-                            },
-                            {
+                                error: error
+                            }, {
                                 debugOnly: true
                             });
                             throw error;
@@ -1728,7 +1721,7 @@
         if (/^\/recommendations(\/|$)/.test(path) || /^\/search(\/|$)/.test(path)) {
             return CACHE_TTL_FEED_MS;
         }
-        if (path === '/profile/me' || /^\/profile\/me\/lists(\/|$)/.test(path) || /^\/profile\/me\/likes\/lists(\/|$)/.test(path)) {
+        if (path === '/users/me' || /^\/users\/me\/lists(\/|$)/.test(path) || /^\/users\/me\/likes\/lists(\/|$)/.test(path)) {
             return CACHE_TTL_PROGRESS_MS;
         }
         if (/^\/networks(\/|$)/.test(path)) {
@@ -2127,8 +2120,8 @@
                             setAuthBlocked('unauthorized_after_refresh');
                             notifyAuthBlockedOnce();
                         }
-                        if (!unauthorized && _t3 && _t3.status === 403 && normalizedEndpoint === '/profile/me') {
-                            setAuthBlocked('users_me_forbidden');
+                        if (!unauthorized && _t3 && _t3.status === 403 && normalizedEndpoint === '/users/me') {
+                            setAuthBlocked('unauthorized_after_refresh');
                             notifyAuthBlockedOnce();
                         }
                         throw _t3;
@@ -2854,7 +2847,7 @@
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var page = params.page || 1;
             var limit = params.limit || 36;
-            return requestApi('GET', "/profile/me/likes/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
+            return requestApi('GET', "/users/me/likes/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
                 var raw = Array.isArray(response) ? response : [];
                 var likedListIds = raw.map(function (item) {
                     var _item$list;
@@ -2882,7 +2875,7 @@
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var page = params.page || 1;
             var limit = params.limit || 36;
-            return requestApi('GET', "/profile/me/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
+            return requestApi('GET', "/users/me/lists?limit=".concat(limit, "&page=").concat(page, "&extended=images")).then(function (response) {
                 var raw = Array.isArray(response) ? response : [];
                 var formatted = _this2.formatListsResults(raw, [], {
                     wide: true,
@@ -2899,7 +2892,7 @@
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var listId = params.listId || params.id;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('GET', "/profile/me/lists/".concat(encodeURIComponent(listId), "?extended=images")).then(function (response) {
+            return requestApi('GET', "/users/me/lists/".concat(encodeURIComponent(listId), "?extended=images")).then(function (response) {
                 return normalizeListCardData(response, {
                     wide: true,
                     canManage: true
@@ -2911,7 +2904,7 @@
             var body = sanitizeListPayload(payload);
             if (!body.name) return Promise.reject(new Error('List name is missing'));
             if (!body.privacy) body.privacy = 'private';
-            return requestApi('POST', '/profile/me/lists', body);
+            return requestApi('POST', '/users/me/lists', body);
         },
         updateList: function updateList() {
             var _ref1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -2920,27 +2913,27 @@
             if (!listId) return Promise.reject(new Error('List ID is missing'));
             var body = sanitizeListPayload(payload);
             if (!body.name) return Promise.reject(new Error('List name is missing'));
-            return requestApi('PUT', "/profile/me/lists/".concat(encodeURIComponent(listId)), body);
+            return requestApi('PUT', "/users/me/lists/".concat(encodeURIComponent(listId)), body);
         },
         deleteList: function deleteList() {
             var _ref10 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 listId = _ref10.listId;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('DELETE', "/profile/me/lists/".concat(encodeURIComponent(listId)));
+            return requestApi('DELETE', "/users/me/lists/".concat(encodeURIComponent(listId)));
         },
         addToList: function addToList() {
             var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 listId = _ref11.listId,
                 item = _ref11.item;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('POST', "/profile/me/lists/".concat(encodeURIComponent(listId), "/items"), buildSyncPayload(item || {}));
+            return requestApi('POST', "/users/me/lists/".concat(encodeURIComponent(listId), "/items"), buildSyncPayload(item || {}));
         },
         removeFromList: function removeFromList() {
             var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                 listId = _ref12.listId,
                 item = _ref12.item;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            return requestApi('POST', "/profile/me/lists/".concat(encodeURIComponent(listId), "/items/remove"), buildSyncPayload(item || {}));
+            return requestApi('POST', "/users/me/lists/".concat(encodeURIComponent(listId), "/items/remove"), buildSyncPayload(item || {}));
         },
         myListItems: function myListItems() {
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -2948,7 +2941,7 @@
             var page = params.page || 1;
             var limit = params.limit || 36;
             if (!listId) return Promise.reject(new Error('List ID is missing'));
-            var url = "/profile/me/lists/".concat(encodeURIComponent(listId), "/items?extended=full,images&page=").concat(page, "&limit=").concat(limit);
+            var url = "/users/me/lists/".concat(encodeURIComponent(listId), "/items?extended=full,images&page=").concat(page, "&limit=").concat(limit);
             return requestApi('GET', url).then(function (response) {
                 var raw = Array.isArray(response) ? response : [];
                 var formatted = formatTraktResults(raw);
@@ -2972,7 +2965,7 @@
             if (!Object.keys(ids).length) return Promise.resolve(false);
             var page = 1;
             var _checkPage = function checkPage() {
-                var url = "/profile/me/lists/".concat(encodeURIComponent(listId), "/items?extended=images&page=").concat(page, "&limit=").concat(limit);
+                var url = "/users/me/lists/".concat(encodeURIComponent(listId), "/items?extended=images&page=").concat(page, "&limit=").concat(limit);
                 return requestApi('GET', url).then(function (response) {
                     var raw = Array.isArray(response) ? response : [];
                     var found = raw.some(function (entry) {
@@ -4203,7 +4196,7 @@
             return Promise.resolve(false);
         }
         if (traktVipStatusPromise) return traktVipStatusPromise;
-        traktVipStatusPromise = Api$2.get('/profile/me').then(function (user) {
+        traktVipStatusPromise = Api$2.get('/users/me').then(function (user) {
             var vipEnabled = !!(user && user.vip);
             writeStoredTraktVipStatus(vipEnabled);
             return vipEnabled;
@@ -7566,7 +7559,7 @@
                     nameEl.html('<span class="trakt-auth-label">Trakt.TV</span>');
                     return;
                 }
-                Api$1.get('/profile/me').then(function (user) {
+                Api$1.get('/users/me').then(function (user) {
                     if (user && user.username) {
                         var vipBadge = user.vip ? ' <span class="trakt-vip-badge trakt-vip-badge--enabled">' + Lampa.Lang.translate('trakttv_vip_enabled') + '</span>' : '';
                         nameEl.html('<span class="trakt-auth-label trakt-auth-label--user">' + Lampa.Lang.translate('trakttv_username') + ': <b>' + user.username + '</b>' + vipBadge + '</span>');
@@ -7681,17 +7674,13 @@
                     }
                 });
                 if (typeof Lampa.Storage.set === 'function') {
-                    Lampa.Storage.set('trakt_active_device_auth', false);
-                    Lampa.Storage.set('trakt_active_device_auth_started_at', null);
-                    Lampa.Storage.set('trakt_auth_blocked', false);
-                    Lampa.Storage.set('trakt_auth_rate_limited_until', null);
-                    Lampa.Storage.set('trakt_refresh_token', null);
                     Lampa.Storage.set('trakt_token', null);
+                    Lampa.Storage.set('trakt_refresh_token', null);
                     Lampa.Storage.set('trakt_token_created_at', null);
                     Lampa.Storage.set('trakt_token_expires_in', null);
                     Lampa.Storage.set('trakt_token_expires_at', null);
-                    Lampa.Storage.set('trakttv_cached_recommendations', null);
-                    Lampa.Storage.set('trakttv_cached_upnext', null)
+                    Lampa.Storage.set('trakt_active_device_auth', false);
+                    Lampa.Storage.set('trakt_active_device_auth_started_at', null);
                 }
                 Lampa.Bell.push({
                     text: Lampa.Lang.translate('trakttvFullClearNoty')
@@ -13149,7 +13138,7 @@
         if (!token) return setTraktHeadStatus(button, 'error');
         var Api = getGlobalApi();
         if (!Api || typeof Api.get !== 'function') return setTraktHeadStatus(button, 'error');
-        Api.get('/profile/me').then(function () {
+        Api.get('/users/me').then(function () {
             return setTraktHeadStatus(button, 'ok');
         })["catch"](function () {
             return setTraktHeadStatus(button, 'error');
