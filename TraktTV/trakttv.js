@@ -7694,6 +7694,7 @@
                     Lampa.Storage.set('trakttv_cached_upnext', null);
                     Lampa.Storage.set('trakttv_cached_recommendations', null);
                     Lampa.Storage.set('trakt_user_vip', null);
+                    Lampa.Storage.set(AUTH_BLOCK_STORAGE_KEY, false);
                 }
                 Lampa.Bell.push({
                     text: Lampa.Lang.translate('trakttvFullClearNoty')
