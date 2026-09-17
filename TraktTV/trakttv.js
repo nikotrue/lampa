@@ -7681,21 +7681,17 @@
                     }
                 });
                 if (typeof Lampa.Storage.set === 'function') {
-                    Lampa.Storage.set('trakt_token', null);
+                    Lampa.Storage.set('trakt_active_device_auth', false);
+                    Lampa.Storage.set('trakt_active_device_auth_started_at', null);
+                    Lampa.Storage.set('trakt_auth_blocked', false);
+                    Lampa.Storage.set('trakt_auth_rate_limited_until', null);
                     Lampa.Storage.set('trakt_refresh_token', null);
+                    Lampa.Storage.set('trakt_token', null);
                     Lampa.Storage.set('trakt_token_created_at', null);
                     Lampa.Storage.set('trakt_token_expires_in', null);
                     Lampa.Storage.set('trakt_token_expires_at', null);
-                    Lampa.Storage.set('trakt_active_device_auth', null);
-                    Lampa.Storage.set('trakt_active_device_auth_started_at', null);
-                    Lampa.Storage.set('trakt_hash_meta_cache', null);
-                    Lampa.Storage.set('trakt_completion_cache', null);
-                    Lampa.Storage.set('trakt_last_card', null);
-                    Lampa.Storage.set('trakttv_cached_upnext', null);
                     Lampa.Storage.set('trakttv_cached_recommendations', null);
-                    Lampa.Storage.set('trakt_user_vip', null);
-                    Lampa.Storage.set(AUTH_BLOCK_STORAGE_KEY, false);
-                    Lampa.Storage.set('trakt_auth_blocked', null);
+                    Lampa.Storage.set('trakttv_cached_upnext', null)
                 }
                 Lampa.Bell.push({
                     text: Lampa.Lang.translate('trakttvFullClearNoty')
