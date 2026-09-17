@@ -1443,7 +1443,7 @@
                             break;
                         }
                         if (logging) logDebug('refreshTokens skipped: no refresh token');
-                        setAuthBlocked('no_refresh_token');
+                        //setAuthBlocked('no_refresh_token');
                         return _context2.a(2, Promise.reject(Object.assign(new Error('No refresh_token'), {
                             status: 0,
                             code: 'no_refresh_token'
@@ -1462,6 +1462,7 @@
                         })));
                     case 2:
                         return _context2.a(2, rlWaitForSlot('/oauth/token').then(function () {
+                            logging = Lampa.Storage.field('trakt_enable_logging');
                             return _performRequest('POST', '/oauth/token', {
                                 refresh_token: refresh_token,
                                 redirect_uri: redirect_uri || '',
@@ -1487,6 +1488,7 @@
                             }
                             if (error && (error.status === 400 || error.status === 401)) {
                                 // setAuthBlocked("refresh_failed_".concat(error.status));
+                                logging = Lampa.Storage.field('trakt_enable_logging');
                                 clearAuthStorage();
                             }
                             if (logging) logWarn('refreshTokens failed', {
