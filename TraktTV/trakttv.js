@@ -1486,7 +1486,7 @@
                                 });
                             }
                             if (error && (error.status === 400 || error.status === 401)) {
-                                setAuthBlocked("refresh_failed_".concat(error.status));
+                                // setAuthBlocked("refresh_failed_".concat(error.status));
                                 clearAuthStorage();
                             }
                             if (logging) logWarn('refreshTokens failed', {
