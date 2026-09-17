@@ -1491,12 +1491,12 @@
                                 logging = Lampa.Storage.field('trakt_enable_logging');
                                 clearAuthStorage();
                             }
-                            if (logging) logWarn('refreshTokens failed', //{
-                                //reason: reason,
-                                //error: error,
+                            if (logging) logWarn('refreshTokens failed', {
+                                reason: reason,
+                                error: error,
                                 //nikotrue
                                 //redirect_uri: redirect_uri
-                            //},
+                            },
                             {
                                 debugOnly: true
                             });
