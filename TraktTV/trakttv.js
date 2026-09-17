@@ -435,7 +435,7 @@
             // 1. Protocol check — file/widget/local protocols are CORS-free
             var protocol = (window.location.protocol || '').toLowerCase();
             if (protocol === 'file:' || protocol === 'widget:' || protocol === 'local:') {
-                _corsFreeDetected = false;
+                _corsFreeDetected = true;
                 return true;
             }
 
@@ -443,7 +443,7 @@
             var ua = navigator.userAgent || '';
             if (/LampaApp|Tizen|WebOS|SmartTV/i.test(ua)) {
                 _corsFreeDetected = true;
-                return true;
+                return false;
             }
         } catch (e) {
             // If detection fails, assume CORS-strict
