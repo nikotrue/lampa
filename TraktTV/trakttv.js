@@ -398,8 +398,7 @@
     // ── Base URLs ─────────────────────────────────────────────────────────────
 
     var PROXY_BASE_URL = 'https://apx.lme.isroot.in/trakt';
-    //var DIRECT_BASE_URL = 'https://api.trakt.tv';
-    var DIRECT_BASE_URL = 'https://apx.lme.isroot.in/trakt';
+    var DIRECT_BASE_URL = 'https://api.trakt.tv';
 
     // ── Client ID for Direct API Calls ────────────────────────────────────────
     // User-provided Trakt client ID, needed only when calling api.trakt.tv directly.
@@ -2122,7 +2121,7 @@
                             notifyAuthBlockedOnce();
                         }
                         if (!unauthorized && _t3 && _t3.status === 403 && normalizedEndpoint === '/users/me') {
-                            setAuthBlocked('unauthorized_after_refresh');
+                            setAuthBlocked('users_me_forbidden');
                             notifyAuthBlockedOnce();
                         }
                         throw _t3;
