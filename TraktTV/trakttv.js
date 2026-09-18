@@ -482,10 +482,11 @@
      * @param {string} path
      * @returns {string}
      */
-    function resolveBaseUrl(path) {
+    function resolveBaseUrl(path, headers) {
         if (isOAuthPath(path)) return PROXY_BASE_URL;
+        if (headers && headers.Authorization) return PROXY_BASE_URL;
         if (corsFreeMode) return DIRECT_BASE_URL;
-        return PROXY_BASE_URL;
+        //return PROXY_BASE_URL;
     }
 
     // ── CORS Error Detection ──────────────────────────────────────────────────
@@ -626,7 +627,7 @@
                 while (1) switch (_context.p = _context.n) {
                     case 0:
                         requestOptions = _args.length > 5 && _args[5] !== undefined ? _args[5] : {};
-                        baseUrl = resolveBaseUrl(path);
+                        baseUrl = resolveBaseUrl(path, headers);
                         useDirect = baseUrl === DIRECT_BASE_URL;
                         withMeta = !!(requestOptions && requestOptions.withMeta);
                         attempts = useDirect ? 2 : 1;
